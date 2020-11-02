@@ -12,7 +12,7 @@ class ANMX_gui(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = 'AnimExtras'
-    bl_label = 'AnimExtras'
+    bl_label = 'Onion Skinning'
 
 
     def draw(self, context):
