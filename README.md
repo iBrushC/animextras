@@ -6,4 +6,6 @@
 
 ## **Changelog:**
 
+ - **Version 1.0.1**: Added build for Blender versions 2.8x
+ 
  - **Version 1.0.0**: Initial release
