@@ -68,7 +68,6 @@ def set_to_active(_obj):
     
     clear_active()
     
-    print(_obj.name)
     scn.anmx_data.onion_object = _obj.name
 
     bake_frames()
@@ -235,7 +234,7 @@ class ANMX_update_onion(Operator):
             return {"FINISHED"}
         
         if context.active_object.type == 'MESH':
-            set_to_active(context.active_object)
+            set_to_active(bpy.data.objects[context.scene.anmx_data.onion_object])
     
         return {"FINISHED"}
 
@@ -298,6 +297,9 @@ class ANMX_draw_meshes(Operator):
         color = (0, 0, 0, 0)
         
         threshold = ac.skin_count
+        
+        if context.space_data.overlay.show_overlays == False:
+            return
         
         for key in batches:
             f_dif = abs(f-int(key))
