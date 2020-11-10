@@ -5,8 +5,8 @@
 bl_info = {
     "name": "AnimExtras",
     "author": "Andrew Combs",
-    "version": (0, 0, 1),
-    "blender": (2, 90, 0),
+    "version": (1, 0, 3),
+    "blender": (2, 80, 0),
     "description": "True onion skinning",
     "category": "Animation"
 }
