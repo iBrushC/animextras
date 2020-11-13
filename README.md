@@ -6,7 +6,9 @@
 
 ## **Changelog:**
 
- - **Version 1.0.3**: Fixed update bug that would switch objects instead of updating them. Turning off overlays now automatically turns off onion skins
+- **Version 1.0.4**: Stop Drawing is now no longer linked to the escape key
+
+- **Version 1.0.3**: Fixed update bug that would switch objects instead of updating them. Turning off overlays now automatically turns off onion skins
 
  - **Version 1.0.2**: Fixed issues with builds not working on 2.8-2.9 versions and alpha versions
  
