@@ -20,21 +20,13 @@ class ANMX_gui(bpy.types.Panel):
         access = context.scene.anmx_data
         obj = context.object
         
-        if access.onion_object == "":
+        if access.onion_object not in bpy.data.objects:
             layout.operator("anim_extras.set_onion")
+            return
         else:
             row = layout.row(align=True)
             row.operator("anim_extras.update_onion", text="Update")
             row.operator("anim_extras.clear_onion", text="Clear Selected")
-            
-        
-        if access.onion_object is "":
-            return
-        else:
-            try:
-                bpy.data.objects[access.onion_object]
-            except KeyError:
-                return
         
         col = layout.column()
         col.label(text="Current Onion Object: {}".format(access.onion_object))
@@ -61,17 +53,26 @@ class ANMX_gui(bpy.types.Panel):
         
         row = layout.row(align=True)
         
+        text = "Past"
+        if access.onion_mode == "INB":
+            text = "Inbetween Color"
+        
         box = row.box()
         col = box.column(align=True)
-        col.label(text="Past")
+        col.label(text=text)
         col.prop(access, "past_color", text="")
         col.prop(access, "past_opacity_start", text="Start Opacity", slider=True)
         col.prop(access, "past_opacity_end", text="End Opacity", slider=True)
         col.prop(access, "past_enabled")
         
+        text = "Future"
+        
+        if access.onion_mode == "INB":
+            text = "Direct Keying Color"
+        
         box = row.box()
         col = box.column(align=True)
-        col.label(text="Future")
+        col.label(text=text)
         col.prop(access, "future_color", text="")
         col.prop(access, "future_opacity_start", text="Start Opacity", slider=True)
         col.prop(access, "future_opacity_end", text="End Opacity", slider=True)
