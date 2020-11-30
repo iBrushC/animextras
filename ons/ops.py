@@ -16,6 +16,7 @@ from mathutils import Vector, Matrix
 shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
 frame_data = dict([])
 batches = dict([])
+extern_data = dict([])
 
 # ################ #
 # Functions        #
@@ -82,6 +83,7 @@ def clear_active():
     # Clears all the data needed to store onion skins on the previously selected object
     frame_data.clear()
     batches.clear()
+    extern_data.clear()
     
     # Gets rid of the selected object
     scn.anmx_data.onion_object = ""
@@ -132,14 +134,29 @@ def bake_frames():
         for f in range(start, end):
             arg = frame_get_set(_obj, f)
             frame_data[str(f)] = arg
+        extern_data.clear()
+        
     elif access.onion_mode == "PFS":
         for f in range(start, end, step):
             arg = frame_get_set(_obj, f)
             frame_data[str(f)] = arg
+        extern_data.clear()
+        
     elif access.onion_mode == "DC":
         for fkey in keyframes:
             arg = frame_get_set(_obj, fkey)
             frame_data[str(fkey)] = arg
+        extern_data.clear()
+        
+    elif access.onion_mode == "INB":
+        for f in range(start, end):
+            arg = frame_get_set(_obj, f)
+            frame_data[str(f)] = arg
+            
+        extern_data.clear()
+        for fkey in keyframes:
+            extern_data[str(fkey)] = fkey
+            
     
     scn.frame_set(curr)
     
@@ -156,7 +173,7 @@ class ANMX_data(PropertyGroup):
             bpy.ops.anim_extras.draw_meshes('INVOKE_DEFAULT')
         return
         
-    modes = [("PF", "Per-Frame", "", 1), ("PFS", "Per-Frame Stepped", "", 2), ("DC", "Direct Keys", "", 3)]
+    modes = [("PF", "Per-Frame", "", 1), ("PFS", "Per-Frame Stepped", "", 2), ("DC", "Direct Keys", "", 3), ("INB", "Inbetweening", "", 4)]
 
     # Onion Skinning Properties
     skin_count: bpy.props.IntProperty(name="Count", default=1, min=1)
@@ -269,12 +286,11 @@ class ANMX_draw_meshes(Operator):
         self.handler = None
     
     def modal(self, context, event):
-        try:
-            bpy.data.objects[context.scene.anmx_data.onion_object]
-        except KeyError:
+        if context.scene.anmx_data.onion_object not in bpy.data.objects:
             self.unregister_handlers(context)
+            return {'CANCELLED'}
         
-        if event.type in {'ESC'} or context.scene.anmx_data.toggle is False or self.mode != context.scene.anmx_data.onion_mode:
+        if context.scene.anmx_data.toggle is False or self.mode != context.scene.anmx_data.onion_mode:
             self.unregister_handlers(context)
             return {'CANCELLED'}
         
@@ -292,6 +308,8 @@ class ANMX_draw_meshes(Operator):
         pc = ac.past_color
         fc = ac.future_color
         
+        
+        
         override = False
         
         color = (0, 0, 0, 0)
@@ -305,17 +323,24 @@ class ANMX_draw_meshes(Operator):
             f_dif = abs(f-int(key))
             
             # Getting the color if the batch is in the past
-            if f > int(key):
-                if ac.past_enabled:
-                    color = (pc[0], pc[1], pc[2], ac.past_opacity_start-((ac.past_opacity_start-ac.past_opacity_end)/ac.skin_count) * f_dif)
+            
+            if len(extern_data) == 0:
+                if f > int(key):
+                    if ac.past_enabled:
+                        color = (pc[0], pc[1], pc[2], ac.past_opacity_start-((ac.past_opacity_start-ac.past_opacity_end)/ac.skin_count) * f_dif)
+                    else:
+                        override = True
+                # Getting the color if the batch is in the future
                 else:
-                    override = True
-            # Getting the color if the batch is in the future
+                    if ac.future_enabled:
+                        color = (fc[0], fc[1], fc[2], ac.future_opacity_start-((ac.future_opacity_start-ac.future_opacity_end)/ac.skin_count) * f_dif)
+                    else:
+                        override = True
             else:
-                if ac.future_enabled:
+                if key in extern_data:
                     color = (fc[0], fc[1], fc[2], ac.future_opacity_start-((ac.future_opacity_start-ac.future_opacity_end)/ac.skin_count) * f_dif)
                 else:
-                    override = True
+                    color = (pc[0], pc[1], pc[2], ac.past_opacity_start-((ac.past_opacity_start-ac.past_opacity_end)/ac.skin_count) * f_dif)
             
             # Only draws if the frame is not the current one, it is within the skin limits, and there has not been an override
             if f != int(key) and f_dif <= ac.skin_count and not override:
