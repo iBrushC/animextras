@@ -6,6 +6,8 @@
 
 ## **Changelog:**
 
+- **Version 1.1.0**: New Onion Skinning mode, Inbetweening, lets you see frames with direct keyframes in a different color than interpolated frames. General cleanup to certain aspects of the code, more consistency and less try-except statements.
+
 - **Version 1.0.4**: Stop Drawing is now no longer linked to the escape key
 
 - **Version 1.0.3**: Fixed update bug that would switch objects instead of updating them. Turning off overlays now automatically turns off onion skins
