@@ -5,6 +5,7 @@
  - <ins>True 3D Onion Skinning</ins>: 3D onion skins drawn directly to the viewport
 
 ## **Changelog:**
+- **Version 1.1.1**: No changes to functionality, just code cleanup.
 
 - **Version 1.1.0**: New Onion Skinning mode, Inbetweening, lets you see frames with direct keyframes in a different color than interpolated frames. General cleanup to certain aspects of the code, more consistency and less try-except statements.
 
