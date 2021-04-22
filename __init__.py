@@ -66,7 +66,6 @@ class ANMX_AddonPreferences(AddonPreferences):
         if kmi:
             col.context_pointer_set("keymap", km)
             rna_keymap_ui.draw_kmi([], kc, km, kmi, col, 0)
-            # col.label(text = "Update Onion OBject")
         else:
             col.label(text = "Update Onion Object")
             col.label(text = "restore hotkeys from interface tab")
@@ -76,7 +75,6 @@ class ANMX_AddonPreferences(AddonPreferences):
         if kmi:
             col.context_pointer_set("keymap", km)
             rna_keymap_ui.draw_kmi([], kc, km, kmi, col, 0)
-            # col.label(text = "Toggle Draw Onion")
         else:
             col.label(text = "Toggle Draw Onion")
             col.label(text = "restore hotkeys from interface tab")
@@ -86,7 +84,6 @@ class ANMX_AddonPreferences(AddonPreferences):
         if kmi:
             col.context_pointer_set("keymap", km)
             rna_keymap_ui.draw_kmi([], kc, km, kmi, col, 0)
-            # col.label(text = "Toggle Draw Onion")
         else:
             col.label(text = "Add / Clear Onion Object")
             col.label(text = "restore hotkeys from interface tab")
@@ -100,6 +97,7 @@ classes = [ANMX_gui, ANMX_data, ANMX_set_onion, ANMX_draw_meshes, ANMX_clear_oni
 @persistent
 def ANMX_clear_handler(scene):
     ops.clear_active(clrRig=False)
+    # bpy.ops.anim_extras.draw_meshes('INVOKE_DEFAULT')
 
 def register():
     for c in classes:
