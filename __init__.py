@@ -30,7 +30,7 @@ bl_info = {
     "description": "True onion skinning",
     "category": "Animation"
     "wiki_url": "https://github.com/iBrushC/animextras",
-	"tracker_url": "https://github.com/iBrushC/animextras" 
+	"tracker_url": "https://github.com/iBrushC/animextras/issues" 
 }
 
 import bpy
