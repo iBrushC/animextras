@@ -324,7 +324,8 @@ class ANMX_set_onion(Operator):
     def poll(cls, context):
         obj = context.active_object
         if context.selected_objects != []:
-            return ((obj.type == 'MESH') and hasattr(obj.animation_data,"action") or (obj.type=='EMPTY') or (obj.type == 'MESH') and hasattr(obj.parent.animation_data,"action"))
+            if hasattr(obj.animation_data,"action"):
+                return ((obj.type == 'MESH') and hasattr(obj.animation_data,"action") or (obj.type=='EMPTY')) or ("animation_data" in obj.parent and (obj.type == 'MESH') and hasattr(obj.parent.animation_data,"action"))
     
     def execute(self, context):
         obj = context.active_object
@@ -439,6 +440,7 @@ class ANMX_draw_meshes(Operator):
     bl_options = {'REGISTER', 'UNDO' }
     
     def __init__(self):
+        print("#### __INIT__ DRAW MESHES ####")
         self.handler = None
         self.timer = None
         self.mode = None
@@ -447,6 +449,7 @@ class ANMX_draw_meshes(Operator):
         """ unregister when done, helps when reopening other scenes """
         print("#### UNREGISTER HANDLERS ####")
         self.finish(bpy.context)
+        print("#### HANDLER %s ####" % self.handler)
 
     def invoke(self, context, event):
         self.register_handlers(context)
