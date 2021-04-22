@@ -27,7 +27,7 @@ extern_data = dict([])
 
 def frame_get_set(_obj, frame):
     scn = bpy.context.scene
-    access = scn.anmx_data
+    anmx = scn.anmx_data
 
     # Show from viewport > keep off this allows in_front to work
     # if "_animextras" in scn.collection.children:
@@ -35,13 +35,12 @@ def frame_get_set(_obj, frame):
     #     vlayer.layer_collection.children['_animextras'].hide_viewport = False
 
     if _obj.type == 'EMPTY':
-        if access.is_linked:
-            print("Dupli Linked")
+        if anmx.is_linked:
             bpy.ops.object.duplicate_move_linked(OBJECT_OT_duplicate={"linked":True})
             # Hide original but keep it able to render
             _obj.hide_viewport = True
             if "_animextras" in scn.collection.children:
-                bpy.data.collections['_animextras'].objects.link(bpy.data.objects[scn.anmx_data.onion_object])
+                bpy.data.collections['_animextras'].objects.link(bpy.data.objects[anmx.onion_object])
             # bpy.ops.object.move_to_collection(collection_index=0, is_new=True, new_collection_name="_animextras")
 
         _obj = bpy.context.active_object
@@ -53,7 +52,7 @@ def frame_get_set(_obj, frame):
             _obj = bpy.context.selected_objects[0]
         
         # print("_obj %s" % _obj)
-        if access.is_linked:
+        if anmx.is_linked:
             bpy.ops.object.make_override_library()
             for i in bpy.data.collections['_animextras'].children[0].objects:
                 if i.type == 'MESH':
@@ -61,10 +60,10 @@ def frame_get_set(_obj, frame):
                     i.hide_render = True
 
             scn.anmx_data.onion_object = new_onion
-            access.is_linked = False
+            anmx.is_linked = False
 
         # Return duplicated linked rig made local     
-        _obj =  bpy.data.objects[access.onion_object]
+        _obj =  bpy.data.objects[anmx.onion_object]
         
         # Make object active so panel shows
         bpy.context.view_layer.objects.active = _obj
@@ -119,20 +118,29 @@ def frame_get_set(_obj, frame):
 
 def set_to_active(_obj):
     """ Sets the object that is being used for the onion skinning """
-    
     scn = bpy.context.scene
+    anmx = scn.anmx_data
     
+    # Clear all data > caused double drawing with mode switch
+    # Old clear method caused issues when using a rig
+    # Still see handler issue
+    frame_data.clear()
+    batches.clear()
+    extern_data.clear()
+
     # skip clear if we are linked
-    if hasattr(scn.anmx_data,"link_parent"):
-        if not scn.anmx_data.link_parent == "":
+    if hasattr(anmx,"link_parent"):
+        if not anmx.link_parent == "":
             clear_active(clrRig=False)
-    scn.anmx_data.onion_object = _obj.name
-    scn.anmx_data.is_linked = True if _obj.type == 'EMPTY' else False
+
+    anmx.onion_object = _obj.name
+    anmx.is_linked = True if _obj.type == 'EMPTY' else False
     
-    if scn.anmx_data.is_linked:
-        if hasattr(scn.anmx_data,"link_parent"):
-            if not scn.anmx_data.link_parent:
-                scn.anmx_data.link_parent = _obj.name
+    if anmx.is_linked:
+        if hasattr(anmx,"link_parent"):
+            if not anmx.link_parent:
+                anmx.link_parent = _obj.name
+
     bake_frames()
     make_batches()
 
@@ -143,7 +151,7 @@ def clear_active(clrRig):
 
     scn = bpy.context.scene
     anmx = scn.anmx_data
-    name = scn.anmx_data.onion_object
+    name = anmx.onion_object
     
     # Clears all the data needed to store onion skins on the previously selected object
     frame_data.clear()
@@ -152,24 +160,24 @@ def clear_active(clrRig):
     
     # Clear localzed rigs & overrides linked items
     if clrRig:
-        if hasattr(scn.anmx_data,"link_parent"):
-            if not scn.anmx_data.link_parent == "":
+        if hasattr(anmx,"link_parent"):
+            if not anmx.link_parent == "":
                 bpy.data.collections["_animextras"].children[0].objects.unlink(bpy.data.objects[name])
-                bpy.data.collections.remove(bpy.data.collections[scn.anmx_data.link_parent])
+                bpy.data.collections.remove(bpy.data.collections[anmx.link_parent])
                 bpy.data.collections.remove(bpy.data.collections["_animextras"])
                 # Show original linked rig again
                 bpy.data.objects[anmx.link_parent].hide_viewport = False
-                scn.anmx_data.link_parent = ""
+                anmx.link_parent = ""
 
     # Gets rid of the selected object
-    scn.anmx_data.onion_object = ""
+    anmx.onion_object = ""
 
 
 def make_batches():
     # Custom OSL shader could be set here
     scn = bpy.context.scene
-    access = scn.anmx_data
-    _obj = bpy.data.objects[access.onion_object]
+    anmx = scn.anmx_data
+    _obj = bpy.data.objects[anmx.onion_object]
     
     
     for key in frame_data:
@@ -184,18 +192,17 @@ def bake_frames():
     # Needs to do the following:
     # 1. Bake the data for every frame and store it in the objects "["frame_data"]" items
     scn = bpy.context.scene
-    access = scn.anmx_data
-    _obj = bpy.data.objects[access.onion_object]
+    anmx = scn.anmx_data
+    _obj = bpy.data.objects[anmx.onion_object]
     
     curr = scn.frame_current
-    step = access.skin_step
+    step = anmx.skin_step
     
     # Getting the first and last frame of the animation
     keyobj = _obj
     
     if _obj.parent is not None:
         keyobj = _obj.parent
-        print(keyobj)
     # Check if obj is linked rig
     elif hasattr(_obj.instance_collection, "all_objects"):
         keyobj = _obj.instance_collection.all_objects[_obj.name]
@@ -212,25 +219,25 @@ def bake_frames():
     start = int(np.min(keyframes))
     end = int(np.max(keyframes)) + 1
     
-    if access.onion_mode == "PF":
+    if anmx.onion_mode == "PF":
         for f in range(start, end):
             arg = frame_get_set(_obj, f)
             frame_data[str(f)] = arg
         extern_data.clear()
         
-    elif access.onion_mode == "PFS":
+    elif anmx.onion_mode == "PFS":
         for f in range(start, end, step):
             arg = frame_get_set(_obj, f)
             frame_data[str(f)] = arg
         extern_data.clear()
         
-    elif access.onion_mode == "DC":
+    elif anmx.onion_mode == "DC":
         for fkey in keyframes:
             arg = frame_get_set(_obj, fkey)
             frame_data[str(fkey)] = arg
         extern_data.clear()
         
-    elif access.onion_mode == "INB":
+    elif anmx.onion_mode == "INB":
         for f in range(start, end):
             arg = frame_get_set(_obj, f)
             frame_data[str(f)] = arg
@@ -305,8 +312,8 @@ class ANMX_data(PropertyGroup):
 
 def check_selected(context):
     obj = context.active_object
-    if context.selected_objects != []:
-        return True
+    return context.selected_objects != []
+        # return True
         # Need workaround so we can pose and still do updates
         # return ((obj.type == 'MESH') and hasattr(obj.animation_data,"action") or (obj.type=='EMPTY') or (obj.type == 'MESH') and hasattr(obj.parent.animation_data,"action"))
     #     if ((obj.type == 'MESH') and hasattr(obj.animation_data,"action") or (obj.type=='EMPTY')):
@@ -324,19 +331,26 @@ class ANMX_set_onion(Operator):
     def poll(cls, context):
         obj = context.active_object
         if context.selected_objects != []:
+            if (hasattr(obj.parent,"animation_data") and (obj.type == 'MESH')):
+                if (hasattr(obj.parent.animation_data,"action")):
+                    return True
             if hasattr(obj.animation_data,"action"):
-                return ((obj.type == 'MESH') and hasattr(obj.animation_data,"action") or (obj.type=='EMPTY')) or ("animation_data" in obj.parent and (obj.type == 'MESH') and hasattr(obj.parent.animation_data,"action"))
+                if hasattr(obj.animation_data.action,"fcurves"):
+                    return ((obj.type == 'MESH') and hasattr(obj.animation_data,"action") or (obj.type=='EMPTY'))
+            if hasattr(obj.instance_collection, "all_objects"):
+                return True
     
     def execute(self, context):
         obj = context.active_object
         scn = context.scene
+        anmx = scn.anmx_data
 
         #Extra check for the shortcuts
         if not check_selected(context):
             self.report({'INFO'}, "Onion needs animated active selection ")
             return {'CANCELLED'}  
 
-        scn.anmx_data.toggle = False if scn.anmx_data.toggle else True
+        anmx.toggle = False if anmx.toggle else True
 
         if obj == None:
             return {"CANCELLED"}
