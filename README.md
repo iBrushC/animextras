@@ -1,20 +1,49 @@
-## **AnimExtras**
-*AnimExtras is an addon for Blender that adds certain ease-of-use tools for animators*
+# AnimExtras
 
-**Current Features:**
- - <ins>True 3D Onion Skinning</ins>: 3D onion skins drawn directly to the viewport
+><b>[AnimExtras](https://github.com/iBrushC/animextras)</b>
 
-## **Changelog:**
-- **Version 1.1.1**: No changes to functionality, just code cleanup.
+AnimExtras is an addon for Blender that adds ease-of-use for animators using onion skinning. It will allow animators to preview have 3d onion skinning in the 3D View using different preview modes. Colors are fully customizable, together with the opacity. Added options allow for a convenient preview when viewing the onion skinning.
 
-- **Version 1.1.0**: New Onion Skinning mode, Inbetweening, lets you see frames with direct keyframes in a different color than interpolated frames. General cleanup to certain aspects of the code, more consistency and less try-except statements.
+!['Preview'](https://raw.githubusercontent.com/wiki/schroef/animextras/images/anmx-v112.jpg?2021-04-21.2)
 
-- **Version 1.0.4**: Stop Drawing is now no longer linked to the escape key
+## Features
 
-- **Version 1.0.3**: Fixed update bug that would switch objects instead of updating them. Turning off overlays now automatically turns off onion skins
+* Dedicated panel
+* Easy clear / update skinning
+* 4 preview modes
+  * Per-Frame
+  * Per-Frame Stepped
+  * Direct Keys
+  * InBetweening
+* Adjust amount / steps count
+* Toggle past / futurepreview
+* Customize colors / opacity
+* X-ray view mode
+* Solid color preview
+* Easy “In Front” toggle
 
- - **Version 1.0.2**: Fixed issues with builds not working on 2.8-2.9 versions and alpha versions
- 
- - **Version 1.0.1**: Added build for Blender versions 2.8x
- 
- - **Version 1.0.0**: Initial release
+### System Requirements
+
+| **OS** | **Blender** |
+| ------------- | ------------- |
+| OSX | Blender 2.80 |
+| Windows | Blender 2.80 |
+| Linux | Not Tested |
+
+<!-- ### Blender 2.80 | Pre-release
+Try this pre-release branch for Blender 2.80: [bl280_dev](https://github.com/PATH-TO-PRE-LEASE) -->
+
+### Installation Process
+
+1. Download the latest <b>[release](https://github.com/iBrushC/animextras/releases/)</b>
+2. If you downloaded the zip file.
+3. Open Blender.
+4. Go to File -> User Preferences -> Addons.
+5. At the bottom of the window, choose *Install From File*.
+6. Select the file `animextras-VERSION.zip` from your download location..
+7. Activate the checkbox for the plugin that you will now find in the list.
+8. Customize shortcuts > remember to save new keymap to store them!
+
+### Changelog
+
+[Full Changelog](CHANGELOG.md)
