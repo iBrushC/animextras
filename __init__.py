@@ -28,7 +28,7 @@ bl_info = {
     "version": (1, 1, 2),
     "blender": (2, 80, 0),
     "description": "True onion skinning",
-    "category": "Animation"
+    "category": "Animation",
     "wiki_url": "https://github.com/iBrushC/animextras",
 	"tracker_url": "https://github.com/iBrushC/animextras/issues" 
 }
