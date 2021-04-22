@@ -100,6 +100,7 @@ classes = [ANMX_gui, ANMX_data, ANMX_set_onion, ANMX_draw_meshes, ANMX_clear_oni
 @persistent
 def ANMX_clear_handler(scene):
     ops.clear_active(clrRig=False)
+    bpy.ops.anim_extras.draw_meshes('INVOKE_DEFAULT')
 
 def register():
     for c in classes:
