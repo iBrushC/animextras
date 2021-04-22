@@ -4,7 +4,7 @@
 
 AnimExtras is an addon for Blender that adds ease-of-use for animators using onion skinning. It will allow animators to preview have 3d onion skinning in the 3D View using different preview modes. Colors are fully customizable, together with the opacity. Added options allow for a convenient preview when viewing the onion skinning.
 
-!['Preview'](https://raw.githubusercontent.com/wiki/schroef/animationextras/images/anmx-v112.jpg?2021-04-21)
+!['Preview'](https://raw.githubusercontent.com/wiki/schroef/animextras/images/anmx-v112.jpg?2021-04-21)
 
 ## Features
 
