@@ -26,7 +26,7 @@ class ANMX_gui(bpy.types.Panel):
         layout.use_property_decorate = False
         
         # Makes sure the user can't do any operations when the onion object doesn't exist
-        if access.onion_object not in bpy.data.objects:
+        if not access.onion_group or len(access.onion_group) == 0:
             layout.operator("anim_extras.set_onion")
             return
         if context.selected_objects == []:
@@ -42,8 +42,10 @@ class ANMX_gui(bpy.types.Panel):
             layout.separator(factor=0.2)
         
         
-        col = layout.column()
-        col.prop(access,"onion_object", text="Current", emboss=False, icon='OUTLINER_OB_MESH') #text="{}".format(access.onion_object), 
+        box = layout.box()
+        box.label(text="Onion Group:")
+        for item in access.onion_group:
+            box.label(text=item.name, icon='OUTLINER_OB_MESH')
         
         col = layout.column()
         col.prop(access, "onion_mode", text="Method")
@@ -106,4 +108,3 @@ class ANMX_gui(bpy.types.Panel):
             text = "Stop Drawing"
         icoOni = 'ONIONSKIN_OFF' if access.toggle else 'ONIONSKIN_ON'
         layout.prop(access, "toggle", text=text, toggle=True, icon=icoOni)
-        
